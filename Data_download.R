@@ -5,6 +5,23 @@ library(sf); library(raster)
 #list working directories
 wd_range_mammals <-  "/Users/carloseduardoaribeiro/Documents/Post-doc/SHAP/Mammals/Range_maps"
 
+#load species range maps
+cat_range <- st_read(dsn = wd_range_mammals , layer = 'Prionailurus bengalensis')
+
+#select the range representing only the native range of the species
+cat_range <- cat_range[cat_range$legend == 'Extant (resident)',]
+
+#unify all features
+cat_range <- st_union(cat_range)
+
+#obtain world map
+world <- ne_countries(returnclass = "sf", scale = 'large')
+
+#plot species range maps
+plot(st_geometry(world), bg = 'azure2', col = 'khaki2', border = NA)
+plot(cat_range, add= T, pch = 21, col = 'darkgreen')
+text(0, 101, 'Prionailurus bengalensis', font = 3, cex = 3)
+
 #download occurrence data
 cat_occ <- occ_search(scientificName = 'Prionailurus bengalensis',
                       limit = 2e+05, 
@@ -45,9 +62,6 @@ cat_occ_sf <- st_as_sf(cat_occ_coordClean,
 plant_occ_sf <- st_as_sf(plant_occ_coordClean,
                          coords = c('decimalLongitude', 'decimalLatitude'),
                          crs = crs(world))
-
-#obtain world map
-world <- ne_countries(returnclass = "sf", scale = 'large')
 
 #plot raw data 
 plot(st_geometry(world), bg = 'azure2', col = 'khaki2', border = NA)
@@ -202,6 +216,10 @@ plot(plant_occ_sf[plant_occ_sf$.dpl == FALSE,],
      add= T, pch = 21, bg = 'purple', col = 'black', cex = 0.6)
 text(0, 101, 'Zamia prasina', font = 3, cex = 3)
 #89 record
+
+
+
+#####
 
 #visualise categories that flagged points to decide to remove or keep
 tail(names(cat_occ_clean),11)
