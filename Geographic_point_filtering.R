@@ -1,5 +1,5 @@
 #load packages
-library(sf); library(terra); 
+library(sf); library(terra); library(samp)
 
 #list working directories
 wd_range_mammals <-  "/Users/carloseduardoaribeiro/Documents/Post-doc/SHAP/Mammals/Range_maps"
