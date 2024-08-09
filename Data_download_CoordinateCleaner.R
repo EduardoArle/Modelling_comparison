@@ -32,8 +32,12 @@ cat_occ <- as.data.frame(cat_occ[3])
 plant_occ <- occ_search(scientificName = 'Zamia prasina',
                         limit = 2e+05, 
                         hasCoordinate = TRUE)
-
 plant_occ <- as.data.frame(plant_occ[3])
+
+#save points cleaned by CoordinateCleaner
+setwd(wd_points)
+write.csv(cat_occ, 'Prionailurus bengalensis_GBIF.csv')
+write.csv(plant_occ, 'Zamia prasina_GBIF.csv')
 
 #rename columns to remove the 'data.'
 names(cat_occ) <- gsub('data.', '', names(cat_occ))
@@ -76,12 +80,14 @@ plant_occ_sf <- st_as_sf(plant_occ_coordClean,
 plot(st_geometry(world), bg = 'azure2', col = 'khaki2', border = NA)
 plot(cat_occ_sf, add= T, pch = 21, bg = 'orange', col = 'black', cex = 0.6)
 text(0, 101, 'Prionailurus bengalensis', font = 3, cex = 3)
-#1445 records
+#save width 1000
+#1464 records
 
 plot(st_geometry(world), bg = 'azure2', col = 'khaki2', border = NA)
 plot(plant_occ_sf, add= T, pch = 21, bg = 'orange', col = 'black', cex = 0.6)
 text(0, 101, 'Zamia prasina', font = 3, cex = 3)
-#277 records 
+#save width 1000
+#278 records 
 
 #plot records flagged by coordinateCleaner
 plot(st_geometry(world), bg = 'azure2', col = 'khaki2', border = NA)
