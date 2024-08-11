@@ -4,6 +4,7 @@ library(sf); library(terra)
 #list WDs
 wd_bioclim <- "/Users/carloseduardoaribeiro/Documents/CNA/Data/Variables/wc2-5"
 wd_landuse <- "/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Land_cover_layers"
+wd_raw_vars <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Raw'
 wd_shp <- "/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Shapefiles"
 wd_vars_cat_pr <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Prionailurus bengalensis/Present'
 wd_vars_plant_pr <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Zamia prasina/Present'
@@ -48,5 +49,25 @@ for(i in 1:length(all_vars))
 }
 
 
+#load variables 2081-2100, HadGEM3, RCP 4.5
+setwd(wd_raw_vars)
+
+vars_had_4.5_2090 <- rast('wc2.1_2.5m_bioc_HadGEM3-GC31-LL_ssp245_2081-2100.tif')
+  
+
+names(vars_had_4.5_end) <- c('bio1', 'bio2', 'bio3', 'bio4', 'bio5', 'bio6',
+                             'bio7', 'bio8', 'bio9', 'bio10', 'bio11', 'bio12',
+                             'bio13', 'bio14', 'bio15', 'bio16', 'bio17',
+                             'bio18', 'bio19')
+
+setwd(wd_landuse)
+lu_4.5_2090 <- rast('global_SSP2_RCP45_2090_RGS84.tif')
+
+#make a list 
+all_vars <- c(vars_had_4.5_2090, lu_4.5_2090) ### extent issue, FIX 
+
+###### TEMPERATURE VARIABLES IN THE FUTURE PROJECTIONS ARE NOT MULTIPLIED PER 10 
+###### AS IN THE CURRENT VARIABLES I USED IN THE MODELS, NEED TO MULTIPLY FUTURE
+###### MULTIPLY VALUES OF VARS BIO1 TO BIO 11 PER 10
 
 
