@@ -1,5 +1,5 @@
 #load packages
-library(terra)
+library(raster)
 
 ###############
 ##### CAT #####
@@ -7,30 +7,61 @@ library(terra)
 
 #list WDs
 wd_cat_pr <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/Present'
+
 wd_cat_had_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2041-2060_HadGEM3_RCP4.5'
+wd_cat_had_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2041-2060_HadGEM3_RCP8.5'
 
 wd_cat_had_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2081-2100_HadGEM3_RCP4.5'
+wd_cat_had_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2081-2100_HadGEM3_RCP8.5'
 
-#load two projections for each scenario for a visual check
+wd_cat_mir_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2041-2060_MIROC6_RCP4.5'
+wd_cat_mir_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2041-2060_MIROC6_RCP8.5'
+
+wd_cat_mir_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2081-2100_MIROC6_RCP4.5'
+wd_cat_mir_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2081-2100_MIROC6_RCP8.5'
+
+wd_evaluation <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Model_evaluation'
+wd_ensemble <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Ensembles'
+
+#load evaluation metrics
+setwd(wd_evaluation)
+eval_cat <- read.csv('Eval_P_bengalensis.csv')
+
+##### PRESENT #####
+
+#list models with TSS higher than 0.5
+cat_sel_TSS <- which(eval_cat$TSS >= 0.5)
+
+#load models
 setwd(wd_cat_pr)
-cat_pr_brt <- rast('Pred_P_bengalensis_1.grd')
-cat_pr_rf <- rast('Pred_P_bengalensis_212.grd')
 
-setwd(wd_cat_had_4.5_2050)
-cat_had_4.5_2050_brt <- rast('Pred_P_bengalensis_1.grd')
-cat_had_4.5_2050_rf <- rast('Pred_P_bengalensis_212.grd')
+#load selected projections
+cat_pr <- list()
+for(i in 1:length(cat_sel_TSS))
+{
+  cat_pr[[i]] <- raster(paste0('Pred_P_bengalensis_', cat_sel_TSS[i], '.grd'))
+  print(i)
+}
 
-setwd(wd_cat_had_4.5_2090)
-cat_had_4.5_2090_brt <- rast('Pred_P_bengalensis_1.grd')
-cat_had_4.5_2090_rf <- rast('Pred_P_bengalensis_212.grd')
+#binarise projections according to threshold
+cat_pr_bin <- list()
+for(i in 1:length(cat_pr))
+{
+  cat_pr_bin[[i]] <- cat_pr[[i]]
+  th <- eval_cat$threshold[cat_sel_TSS[i]]
+  cat_pr_bin[[i]][] <- ifelse(cat_pr_bin[[i]][] >= th, 1, 0)
+  print(i)
+}
 
-par(mfrow = c(2, 3))
-plot(cat_pr_brt, main = 'BRT Present')
-plot(cat_had_4.5_2050_brt, main = 'BRT Had 4.5 2050')
-plot(cat_had_4.5_2090_brt, main = 'BRT Had 4.5 2090')
-plot(cat_pr_rf, main = 'RF Present')
-plot(cat_had_4.5_2050_rf, main = 'RF Had 4.5 2050')
-plot(cat_had_4.5_2090_rf, main = 'RF Had 4.5 2090')
+#stack all projections
+cat_pr_bin <- stack(cat_pr_bin)
+
+#sum all layers and calculate percentage of agreement
+cat_pr_ens <- sum(cat_pr_bin) / length(cat_sel_TSS) * 100
+
+#save raster layer
+setwd(wd_ensemble)
+writeRaster(cat_pr_ens, 'Prionailurus_bengalensis_present.tif')
 
 #################
 ##### PLANT #####
@@ -38,31 +69,16 @@ plot(cat_had_4.5_2090_rf, main = 'RF Had 4.5 2090')
 
 #list WDs
 wd_plant_pr <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/Present'
+
 wd_plant_had_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2041-2060_HadGEM3_RCP4.5'
+wd_plant_had_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2041-2060_HadGEM3_RCP8.5'
 
 wd_plant_had_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2081-2100_HadGEM3_RCP4.5'
+wd_plant_had_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2081-2100_HadGEM3_RCP8.5'
 
-#load two projections for each scenario for a visual check
-setwd(wd_plant_pr)
-plant_pr_brt <- rast('Pred_Z_prasina_1.grd')
-plant_pr_rf <- rast('Pred_Z_prasina_212.grd')
+wd_plant_mir_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2041-2060_MIROC6_RCP4.5'
+wd_plant_mir_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2041-2060_MIROC6_RCP8.5'
 
-setwd(wd_plant_had_4.5_2050)
-plant_had_4.5_2050_brt <- rast('Pred_Z_prasina_1.grd')
-plant_had_4.5_2050_rf <- rast('Pred_Z_prasina_212.grd')
-
-setwd(wd_plant_had_4.5_2090)
-plant_had_4.5_2090_brt <- rast('Pred_Z_prasina_1.grd')
-plant_had_4.5_2090_rf <- rast('Pred_Z_prasina_212.grd')
-
-par(mfrow = c(2, 3))
-plot(plant_pr_brt, main = 'BRT Present')
-plot(plant_had_4.5_2050_brt, main = 'BRT Had 4.5 2050')
-plot(plant_had_4.5_2090_brt, main = 'BRT Had 4.5 2090')
-plot(plant_pr_rf, main = 'RF Present')
-plot(plant_had_4.5_2050_rf, main = 'RF Had 4.5 2050')
-plot(plant_had_4.5_2090_rf, main = 'RF Had 4.5 2090')
-
-
-
+wd_plant_mir_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2081-2100_MIROC6_RCP4.5'
+wd_plant_mir_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2081-2100_MIROC6_RCP8.5'
 
