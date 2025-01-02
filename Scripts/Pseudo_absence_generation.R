@@ -69,16 +69,16 @@ cyca_pa <- cyca_sf[!is.na(cyca_pts_area),]
 
 #visualise
 plot(st_geometry(study_area_cat), border = NA, col = '#d5d5d5')
-plot(st_geometry(cat_sf), add = T, pch = 19, cex = 0.8, col = '#208920')
+plot(st_geometry(cat_sf), add = T, pch = 19, cex = 0.4, col = '#208920')
 
 plot(st_geometry(study_area_cat), border = NA, col = '#d5d5d5')
-plot(st_geometry(mammal_pa), add = T, pch = 19, cex = 0.8, col = '#d58920')
+plot(st_geometry(mammal_pa), add = T, pch = 19, cex = 0.4, col = '#d58920')
 
 plot(st_geometry(study_area_plant), border = NA, col = '#d5d5d5')
-plot(st_geometry(plant_sf), add = T, pch = 19, cex = 0.8, col = '#208920')
+plot(st_geometry(plant_sf), add = T, pch = 19, cex = 0.4, col = '#208920')
 
 plot(st_geometry(study_area_plant), border = NA, col = '#d5d5d5')
-plot(st_geometry(cyca_pa), add = T, pch = 19, cex = 0.8, col = '#d58920')
+plot(st_geometry(cyca_pa), add = T, pch = 19, cex = 0.4, col = '#d58920')
 
 #load variable layer to thin points 
 setwd(wd_vars)
@@ -148,21 +148,12 @@ pa_plant3 <- pa_plant2[sample(c(1:nrow(pa_plant2)), n_pa_plant),] #error
 #there are 147 presences, and 138 options for pa, so..
 pa_plant3 <- pa_plant2
 
-#visualise PA are
-plot(st_geometry(pa_area_cat), col = 'orange')
-plot(cat_sf, add = T, col = '#000000', bg = '#30A530', pch = 21, cex = 0.4)
+#visualise
+plot(st_geometry(pa_area_cat), col = '#30A530')
+plot(pa_cat3, add = T, col = '#000000', bg = 'orange', pch = 21, cex = 0.4)
 
-plot(st_geometry(pa_area_plant), col = 'orange')
-plot(plant_sf, add = T, col = '#000000', bg = '#30A530', pch = 21, cex = 0.4)
-
-#visualise pres and PA
-plot(st_geometry(study_area_cat), border = NA, col = '#d5d5d5')
-plot(cat_sf, add = T, col = '#30A530', pch = 19, cex = 0.4)
-plot(pa_cat3, add = T, col = '#d58920', pch = 19, cex = 0.4)
-
-plot(st_geometry(study_area_plant), border = NA, col = '#d5d5d5')
-plot(plant_sf, add = T, col = '#30A530', pch = 19, cex = 0.4)
-plot(pa_plant3, add = T, col = '#d58920', pch = 19, cex = 0.4)
+plot(st_geometry(pa_area_plant), col = '#30A530')
+plot(pa_plant3, add = T, col = '#000000', bg = 'orange', pch = 21, cex = 0.4)
 
 #prepare tables to save
 coords_cat <- as.data.frame(st_coordinates(pa_cat3)) #get coordinates

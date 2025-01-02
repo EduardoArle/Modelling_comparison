@@ -54,11 +54,6 @@ plant_pa2 <- data.frame(occurrence = 0,
 cat_occ <- rbind(cat_pres2, cat_pa2)
 plant_occ <- rbind(plant_pres2, plant_pa2)
 
-#save joint tables
-setwd(wd_occ)
-write.csv(cat_occ, 'Occurrence_table_cat.csv', row.names = F)
-write.csv(plant_occ, 'Occurrence_table_plant.csv', row.names = F)
-
 #create a spatial points data frame
 cat_occ_sp <- cat_occ
 plant_occ_sp <- plant_occ

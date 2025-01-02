@@ -312,3 +312,221 @@ for(i in 1:250)
                                             filename = paste0('Pred_Z_prasina_', i, '.grd'))
   }
 }
+
+
+
+################################
+##### 2041-2060 MIROC6 4.5 #####
+################################
+
+
+
+#list WDs to be used in projections for 2081-2100 MIROC6 4.5
+wd_vars_cat_mir_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Prionailurus bengalensis/2041-2060_MIROC6_RCP4.5'
+wd_vars_plant_mir_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Zamia prasina/2041-2060_MIROC6_RCP4.5'
+wd_proj_cat_mir_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2041-2060_MIROC6_RCP4.5'
+wd_proj_plant_mir_4.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2041-2060_MIROC6_RCP4.5'
+
+#load variables 2081-2100 HadGEM3 4.5
+setwd(wd_vars_cat_mir_4.5_2050)
+vars_cat <- lapply(list.files(), raster)
+
+setwd(wd_vars_plant_mir_4.5_2050)
+vars_plant <- lapply(list.files(), raster)
+
+#make a rasterStack with selected variables for each species
+vars_sel_cat <- stack(vars_cat[c(12,14,18,5,6,10,20)])
+vars_sel_plant <- stack(vars_plant[c(13,15,17,7,10,20)])
+
+#change name of LU var to match the name used to train models
+names(vars_sel_cat)[7] <- 'global_LULC_2015'
+names(vars_sel_plant)[6] <- 'global_LULC_2015'
+
+#project models
+setwd(wd_proj_cat_mir_4.5_2050)
+
+pred_cat_mir_4.5_2050 <- list()
+for(i in 1:250)
+{
+  if(i %in% cat_sel_TSS){
+    pred_cat_mir_4.5_2050[[i]] <- predict(sdm_cat, w = i, newdata = vars_sel_cat, 
+                                          filename = paste0('Pred_P_bengalensis_', i, '.grd'))
+  }
+}
+
+
+setwd(wd_proj_plant_mir_4.5_2050)
+
+pred_plant_mir_4.5_2050 <- list()
+for(i in 1:250)
+{
+  if(i %in% plant_sel_TSS){
+    pred_plant_mir_4.5_2050[[i]] <- predict(sdm_plant, w = i,
+                                            newdata = vars_sel_plant, 
+                                            filename = paste0('Pred_Z_prasina_', i, '.grd'))
+  }
+}
+
+
+
+################################
+##### 2041-2060 MIROC6 8.5 #####
+################################
+
+
+
+#list WDs to be used in projections for 2081-2100 MIROC6 8.5
+wd_vars_cat_mir_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Prionailurus bengalensis/2041-2060_MIROC6_RCP8.5'
+wd_vars_plant_mir_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Zamia prasina/2041-2060_MIROC6_RCP8.5'
+wd_proj_cat_mir_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2041-2060_MIROC6_RCP8.5'
+wd_proj_plant_mir_8.5_2050 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2041-2060_MIROC6_RCP8.5'
+
+#load variables 2081-2100 HadGEM3 8.5
+setwd(wd_vars_cat_mir_8.5_2050)
+vars_cat <- lapply(list.files(), raster)
+
+setwd(wd_vars_plant_mir_8.5_2050)
+vars_plant <- lapply(list.files(), raster)
+
+#make a rasterStack with selected variables for each species
+vars_sel_cat <- stack(vars_cat[c(12,14,18,5,6,10,20)])
+vars_sel_plant <- stack(vars_plant[c(13,15,17,7,10,20)])
+
+#change name of LU var to match the name used to train models
+names(vars_sel_cat)[7] <- 'global_LULC_2015'
+names(vars_sel_plant)[6] <- 'global_LULC_2015'
+
+#project models
+setwd(wd_proj_cat_mir_8.5_2050)
+
+pred_cat_mir_8.5_2050 <- list()
+for(i in 1:250)
+{
+  if(i %in% cat_sel_TSS){
+    pred_cat_mir_8.5_2050[[i]] <- predict(sdm_cat, w = i, newdata = vars_sel_cat, 
+                                          filename = paste0('Pred_P_bengalensis_', i, '.grd'))
+  }
+}
+
+
+setwd(wd_proj_plant_mir_8.5_2050)
+
+pred_plant_mir_8.5_2050 <- list()
+for(i in 1:250)
+{
+  if(i %in% plant_sel_TSS){
+    pred_plant_mir_8.5_2050[[i]] <- predict(sdm_plant, w = i,
+                                            newdata = vars_sel_plant, 
+                                            filename = paste0('Pred_Z_prasina_', i, '.grd'))
+  }
+}
+
+
+
+################################
+##### 2081-2100 MIROC6 4.5 #####
+################################
+
+
+
+#list WDs to be used in projections for 2081-2100 MIROC6 4.5
+wd_vars_cat_mir_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Prionailurus bengalensis/2081-2100_MIROC6_RCP4.5'
+wd_vars_plant_mir_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Zamia prasina/2081-2100_MIROC6_RCP4.5'
+wd_proj_cat_mir_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2081-2100_MIROC6_RCP4.5'
+wd_proj_plant_mir_4.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2081-2100_MIROC6_RCP4.5'
+
+#load variables 2081-2100 MIROC6 4.5
+setwd(wd_vars_cat_mir_4.5_2090)
+vars_cat <- lapply(list.files(), raster)
+
+setwd(wd_vars_plant_mir_4.5_2090)
+vars_plant <- lapply(list.files(), raster)
+
+#make a rasterStack with selected variables for each species
+vars_sel_cat <- stack(vars_cat[c(12,14,18,5,6,10,20)])
+vars_sel_plant <- stack(vars_plant[c(13,15,17,7,10,20)])
+
+#change name of LU var to match the name used to train models
+names(vars_sel_cat)[7] <- 'global_LULC_2015'
+names(vars_sel_plant)[6] <- 'global_LULC_2015'
+
+#project models
+setwd(wd_proj_cat_mir_4.5_2090)
+
+pred_cat_mir_4.5_2090 <- list()
+for(i in 1:250)
+{
+  if(i %in% cat_sel_TSS){
+    pred_cat_mir_4.5_2090[[i]] <- predict(sdm_cat, w = i, newdata = vars_sel_cat, 
+                                          filename = paste0('Pred_P_bengalensis_', i, '.grd'))
+  }
+}
+
+
+setwd(wd_proj_plant_mir_4.5_2090)
+
+pred_plant_mir_4.5_2090 <- list()
+for(i in 1:250)
+{
+  if(i %in% plant_sel_TSS){
+    pred_plant_mir_4.5_2090[[i]] <- predict(sdm_plant, w = i,
+                                            newdata = vars_sel_plant, 
+                                            filename = paste0('Pred_Z_prasina_', i, '.grd'))
+  }
+}
+
+
+
+################################
+##### 2081-2100 MIROC6 8.5 #####
+################################
+
+
+
+#list WDs to be used in projections for 2081-2100 MIROC6 8.5
+wd_vars_cat_mir_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Prionailurus bengalensis/2081-2100_MIROC6_RCP8.5'
+wd_vars_plant_mir_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Variables/Processed/Zamia prasina/2081-2100_MIROC6_RCP8.5'
+wd_proj_cat_mir_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Prionailurus bengalensis/2081-2100_MIROC6_RCP8.5'
+wd_proj_plant_mir_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Zamia prasina/2081-2100_MIROC6_RCP8.5'
+
+#load variables 2081-2100 MIROC6 8.5
+setwd(wd_vars_cat_mir_8.5_2090)
+vars_cat <- lapply(list.files(), raster)
+
+setwd(wd_vars_plant_mir_8.5_2090)
+vars_plant <- lapply(list.files(), raster)
+
+#make a rasterStack with selected variables for each species
+vars_sel_cat <- stack(vars_cat[c(12,14,18,5,6,10,20)])
+vars_sel_plant <- stack(vars_plant[c(13,15,17,7,10,20)])
+
+#change name of LU var to match the name used to train models
+names(vars_sel_cat)[7] <- 'global_LULC_2015'
+names(vars_sel_plant)[6] <- 'global_LULC_2015'
+
+#project models
+setwd(wd_proj_cat_mir_8.5_2090)
+
+pred_cat_mir_8.5_2090 <- list()
+for(i in 1:250)
+{
+  if(i %in% cat_sel_TSS){
+    pred_cat_mir_8.5_2090[[i]] <- predict(sdm_cat, w = i, newdata = vars_sel_cat, 
+                                          filename = paste0('Pred_P_bengalensis_', i, '.grd'))
+  }
+}
+
+
+setwd(wd_proj_plant_mir_8.5_2090)
+
+pred_plant_mir_8.5_2090 <- list()
+for(i in 1:250)
+{
+  if(i %in% plant_sel_TSS){
+    pred_plant_mir_8.5_2090[[i]] <- predict(sdm_plant, w = i,
+                                            newdata = vars_sel_plant, 
+                                            filename = paste0('Pred_Z_prasina_', i, '.grd'))
+  }
+}
+
+
