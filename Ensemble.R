@@ -1,5 +1,5 @@
 #load packages
-library(raster)
+library(raster); library(PresenceAbsence)
 
 ###############
 ##### CAT #####
@@ -17,14 +17,20 @@ wd_cat_had_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Ad
 wd_evaluation <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Model_evaluation'
 wd_ensemble <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Ensembles'
 
+wd_occ <- "/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Point_data"
+
+
 #load evaluation metrics
 setwd(wd_evaluation)
 eval_cat <- read.csv('Eval_P_bengalensis.csv')
 
 #list models with TSS higher than 0.5
 cat_sel_TSS <- which(eval_cat$TSS >= 0.5)
+cat_sel_TSS_2 <- which(eval_cat$TSS >= 0.5 & eval_cat$AUC >= 0.7)
 
 
+#list algorithms used in the ensemble
+table(eval_cat$Algorithm[cat_sel_TSS])
 
 ##### PRESENT #####
 
@@ -67,6 +73,37 @@ writeRaster(cat_pr_ens, 'Prionailurus_bengalensis_present.tif',
 cat_pr_ens <- raster('Prionailurus_bengalensis_present.tif')
 
 
+#load occ
+setwd(wd_occ)
+cat_occ <- read.csv("Occurrence_table_cat.csv")
+
+#make spatial object
+coordinates(cat_occ) <- ~ lon + lat
+proj4string(cat_occ) <- crs(cat_pr_ens)
+
+#extract precictions in locations of occurrences
+pred <- extract(cat_pr_ens, cat_occ) / 100
+
+##  TSS  ##
+
+# TSS = Sensitivity + Specificity - 1
+# We need to choose a threshold to convert probabilities to binary predictions
+
+# Use PresenceAbsence package to calculate across thresholds
+df <- data.frame(ID = 1:nrow(cat_occ), obs = cat_occ$occurrence, pred = pred)
+
+#eliminate NAs
+df <- df[complete.cases(df$pred),]
+
+# Calculate accuracy measures for many thresholds
+acc <- presence.absence.accuracy(df, threshold = seq(0, 1, 0.01))
+
+# Find threshold with maximum TSS
+best_row <- acc[which.max(acc$sensitivity + acc$specificity - 1), ]
+tss_val <- best_row$sensitivity + best_row$specificity - 1
+
+print(tss_val)
+print(best_row$threshold)  # threshold that maximizes TSS
 
 ##### 2050 #####
 
@@ -110,7 +147,7 @@ writeRaster(cat_had_4.5_2050_sum, 'Prionailurus_bengalensis_had_4.5_2050.tif',
 
 cat_had_4.5_2050_sum <- raster('Prionailurus_bengalensis_had_4.5_2050.tif')
 
-
+cat_had_4.5_2050_ens <- cat_had_4.5_2050_sum / 137 * 100
 
 ##################################################################. had_8.5_2050
 
@@ -150,7 +187,7 @@ writeRaster(cat_had_8.5_2050_sum, 'Prionailurus_bengalensis_had_8.5_2050.tif',
 
 cat_had_8.5_2050_sum <- raster('Prionailurus_bengalensis_had_8.5_2050.tif')
 
-
+cat_had_8.5_2050_ens <- cat_had_8.5_2050_sum / 137 * 100
 
 ################################################################## ensemble 2050
 
@@ -170,7 +207,7 @@ setwd(wd_ensemble)
 writeRaster(cat_had_2050_ens, 'Prionailurus_bengalensis_had_2050.tif',
             format ="GTiff")
 
-
+cat_had_2050_ens <- raster('Prionailurus_bengalensis_2050.tif')
 
 ##### 2090 #####
 
@@ -213,6 +250,10 @@ writeRaster(cat_had_4.5_2090_sum, 'Prionailurus_bengalensis_had_4.5_2090.tif',
             format ="GTiff")
 
 
+cat_had_4.5_2090_sum <- raster('Prionailurus_bengalensis_had_4.5_2090.tif')
+
+
+cat_had_4.5_2090_ens <- cat_had_4.5_2090_sum / 137 * 100
 
 ##################################################################. had_8.5_2090
 
@@ -250,7 +291,10 @@ setwd(wd_ensemble)
 writeRaster(cat_had_8.5_2090_sum, 'Prionailurus_bengalensis_had_8.5_2090.tif',
             format ="GTiff")
 
+cat_had_8.5_2090_sum <- raster('Prionailurus_bengalensis_had_8.5_2090.tif')
 
+
+cat_had_8.5_2090_ens <- cat_had_8.5_2090_sum / 137 * 100
 
 ################################################################## ensemble 2090
 
@@ -272,6 +316,9 @@ writeRaster(cat_2090_had_ens, 'Prionailurus_bengalensis_had_2090.tif',
             format ="GTiff")
 
 
+cat_had_2090_ens <- raster('Prionailurus_bengalensis_2090.tif')
+
+
 
 #################
 ##### PLANT #####
@@ -291,12 +338,20 @@ wd_plant_had_8.5_2090 <- '/Users/carloseduardoaribeiro/Documents/Collaborations/
 wd_evaluation <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Model_evaluation'
 wd_ensemble <- '/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Projections/Ensembles'
 
+wd_occ <- "/Users/carloseduardoaribeiro/Documents/Collaborations/Adam Smith/Point_data"
+
+
 #load evaluation metrics
 setwd(wd_evaluation)
 eval_plant <- read.csv('Eval_Z_prasina.csv')
 
 #list models with TSS higher than 0.5
 plant_sel_TSS <- which(eval_plant$TSS >= 0.5)
+plant_sel_TSS_2 <- which(eval_plant$TSS >= 0.5)
+
+
+#list algorithms used in the ensemble
+table(eval_plant$Algorithm[plant_sel_TSS])
 
 
 
@@ -335,6 +390,40 @@ plant_pr_ens <- sum(plant_pr_bin) / length(plant_sel_TSS) * 100
 setwd(wd_ensemble)
 writeRaster(plant_pr_ens, 'Zamia_prasina_present.tif')
 
+plant_pr_ens <- raster('Zamia_prasina_present.tif')
+
+
+#load occ
+setwd(wd_occ)
+plant_occ <- read.csv("Occurrence_table_plant.csv")
+
+#make spatial object
+coordinates(plant_occ) <- ~ lon + lat
+proj4string(plant_occ) <- crs(plant_pr_ens)
+
+#extract precictions in locations of occurrences
+pred <- extract(plant_pr_ens, plant_occ) / 100
+
+##  TSS  ##
+
+# TSS = Sensitivity + Specificity - 1
+# We need to choose a threshold to convert probabilities to binary predictions
+
+# Use PresenceAbsence package to calculate across thresholds
+df <- data.frame(ID = 1:nrow(plant_occ), obs = plant_occ$occurrence, pred = pred)
+
+#eliminate NAs
+df <- df[complete.cases(df$pred),]
+
+# Calculate accuracy measures for many thresholds
+acc <- presence.absence.accuracy(df, threshold = seq(0, 1, 0.01))
+
+# Find threshold with maximum TSS
+best_row <- acc[which.max(acc$sensitivity + acc$specificity - 1), ]
+tss_val <- best_row$sensitivity + best_row$specificity - 1
+
+print(tss_val)
+print(best_row$threshold)  # threshold that maximizes TSS
 
 
 ##### 2050 #####
@@ -379,7 +468,9 @@ writeRaster(plant_had_4.5_2050_sum, 'Zamia_prasina_had_4.5_2050.tif',
 
 plant_had_4.5_2050_sum <- raster('Zamia_prasina_had_4.5_2050.tif')
 
+plant_had_4.5_2050_ens <- plant_had_4.5_2050_sum / 250 * 100
 
+plot(plant_had_4.5_2050_ens, zlim = c(0, 100))
 
 ##################################################################. had_8.5_2050
 
@@ -419,7 +510,9 @@ writeRaster(plant_had_8.5_2050_sum, 'Zamia_prasina_had_8.5_2050.tif',
 
 plant_had_8.5_2050_sum <- raster('Zamia_prasina_had_8.5_2050.tif')
 
+plant_had_8.5_2050_ens <- plant_had_8.5_2050_sum / 250 * 100
 
+plot(plant_had_8.5_2050_ens, zlim = c(0, 100))
 
 ################################################################## ensemble 2050
 
@@ -481,7 +574,11 @@ setwd(wd_ensemble)
 writeRaster(plant_had_4.5_2090_sum, 'Zamia_prasina_had_4.5_2090.tif',
             format ="GTiff")
 
+plant_had_4.5_2090_sum <- raster('Zamia_prasina_had_4.5_2090.tif')
 
+plant_had_4.5_2090_ens <- plant_had_4.5_2090_sum / 250 * 100
+
+plot(plant_had_4.5_2090_ens, zlim = c(0, 100))
 
 ##################################################################. had_8.5_2090
 
@@ -520,6 +617,11 @@ writeRaster(plant_had_8.5_2090_sum, 'Zamia_prasina_had_8.5_2090.tif',
             format ="GTiff")
 
 
+plant_had_8.5_2090_sum <- raster('Zamia_prasina_had_8.5_2090.tif')
+
+plant_had_8.5_2090_ens <- plant_had_8.5_2090_sum / 250 * 100
+
+plot(plant_had_8.5_2090_ens, zlim = c(0, 100))
 
 ################################################################## ensemble 2090
 
